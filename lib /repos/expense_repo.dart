@@ -1,11 +1,11 @@
 import 'package:http/http.dart' as http;
-import 'package:budget/models/expense_model.dart';
 import 'package:flutter/foundation.dart';
 
-Future<ExpenseModel> readExpenseData() async{
-  String url = "http://localhost:8888/BUDGET%20APP/read_expense_data.php";
-  http.Response response = await http.get(url);
+import '../models/expense_model.dart';
 
+Future<ExpenseModel> readExpenseData() async{
+  String url = "http://localhost:8888/db4flutter/read_expense_data.php";
+  http.Response response = await http.get(url);
   if(response.statusCode == 200) {
     return compute(expenseModelFromJson, response.body);
   }
@@ -15,7 +15,7 @@ Future<ExpenseModel> readExpenseData() async{
 }
 
 Future<String> insertExpenseData(Expense expense) async{
-  String url = "http://localhost:8888/BUDGET%20APP/insert_expense_data.php";
+  String url = "http://localhost:8888/db4flutter/insert_expense_data.php";
   http.Response response = await http.post(url, body: expense.toJson());
 
   if(response.statusCode == 200) {
@@ -27,7 +27,7 @@ Future<String> insertExpenseData(Expense expense) async{
 }
 
 Future<String> updateExpenseData(Expense expense) async{
-  String url = "http://localhost:8888/BUDGET%20APP/updata_expense_data.php";
+  String url = "http://localhost:8888/db4flutter/updata_expense_data.php";
   http.Response response = await http.post(url, body: expense.toJson());
 
   if(response.statusCode == 200) {
@@ -39,7 +39,7 @@ Future<String> updateExpenseData(Expense expense) async{
 }
 
 Future<String> deleteExpenseData(Expense expense) async{
-  String url = "http://localhost:8888/BUDGET%20APP/delete_expense_data.php";
+  String url = "http://localhost:8888/db4flutter/delete_expense_data.php";
   http.Response response = await http.post(url, body: expense.toJson());
 
   if(response.statusCode == 200) {

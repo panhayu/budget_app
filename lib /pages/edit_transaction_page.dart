@@ -1,25 +1,35 @@
-import 'package:budget/pages/overview_page.dart';
-import 'package:budget/repos/expense_repo.dart';
-import 'package:flutter/material.dart';
+import '../models/expense_model.dart';
+import '../repos/expense_repo.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:budget/models/expense_model.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class AddTransactionPage extends StatefulWidget {
+class EditExpenseDataPage extends StatefulWidget {
+
+  final Expense expense;
+  EditExpenseDataPage({this.expense});
+
   @override
-  _AddTransactionPageState createState() => _AddTransactionPageState();
+  _EditExpenseDataPageState createState() => _EditExpenseDataPageState();
 }
 
-class _AddTransactionPageState extends State<AddTransactionPage> {
-
-  DateTime _dateTime = DateTime.now();
-  var _amountCtr = TextEditingController();
+class _EditExpenseDataPageState extends State<EditExpenseDataPage> {
+  var _amountCtrl = TextEditingController();
   var _transactionNameCtrl = TextEditingController();
   var _noteCtrl = TextEditingController();
   var _scaffoldKey = GlobalKey<ScaffoldState>();
 
   _showMessage(String text) {
     _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(text)));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _amountCtrl.text = widget.expense.amount;
+    _transactionNameCtrl.text = widget.expense.title;
+    _noteCtrl.text = widget.expense.note;
   }
 
   @override
@@ -33,7 +43,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         },
         child: _buildBody,
       ),
-      bottomNavigationBar: _buildButtonNavigationBar,
+      // bottomNavigationBar: _buildButtonNavigationBar,
     );
   }
 
@@ -44,16 +54,16 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       leading: IconButton(
         icon: Icon(CupertinoIcons.back),
         onPressed: () {
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => OverviewPage()));
+          Navigator.of(context).pop();
         },
       ),
-      title: Text("Add Expense"),
+      title: Text("Edit Expense Transaction"),
     );
   }
 
   get _buildBody {
     return Container(
+      color: Colors.grey[200],
       alignment: Alignment.center,
       child: _buildParentView,
     );
@@ -61,7 +71,9 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
 
   get _buildParentView {
     return Container(
-      margin: EdgeInsets.only(top: 50),
+      color: Colors.white,
+      padding: EdgeInsets.only(left: 10, top: 40, right: 10, bottom: 20),
+      margin: EdgeInsets.only(top: 20),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -105,7 +117,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       width: 400,
       height: 80,
       child: TextField(
-        controller: _amountCtr,
+        controller: _amountCtrl,
         keyboardType: TextInputType.phone,
         decoration: InputDecoration(
           suffixIcon: Icon(
@@ -237,6 +249,8 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
     );
   }
 
+  DateTime _dateTime = DateTime.now();
+
   get _buildDateSelectField {
     String _dateFormatted = DateFormat.yMMMMd().format(_dateTime);
     return InkWell(
@@ -252,7 +266,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         ),
         child: ListTile(
           leading: Text(
-            _dateFormatted,
+            "$_dateFormatted",
             style: TextStyle(fontSize: 18),
           ),
           trailing: Icon(CupertinoIcons.calendar),
@@ -287,66 +301,32 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       width: 200,
       child: RaisedButton(
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(80),
-            side: BorderSide(color: Color.fromRGBO(0, 160, 227, 1))),
+          borderRadius: BorderRadius.circular(80),
+          side: BorderSide(color: Color.fromRGBO(0, 160, 227, 1)),
+        ),
         onPressed: () {
           Expense expense = Expense(
-            id: "0",
-            title: _transactionNameCtrl.text,
-            note: _noteCtrl.text,
-            amount: _amountCtr.text,
+            id: widget.expense.id,
+            title: _transactionNameCtrl.text.trim(),
+            note: _noteCtrl.text.trim(),
+            amount: _amountCtrl.text.trim(),
             date: _dateTime.toString(),
           );
 
-          insertExpenseData(expense).then((value) {
+          updateExpenseData(expense).then((value) {
             print("value: $value");
-            if (value == "inserted") {
-              _showMessage("Expense data inserted successfully.");
+            if (value == "updated") {
+              _showMessage("Expense data updated successfully.");
             } else {
               _showMessage("Something went wrong! Please try again.");
             }
+            Navigator.of(context).pop();
           });
         },
         padding: EdgeInsets.all(10.0),
         color: Colors.blue[800],
         textColor: Colors.white,
         child: Text("Done", style: TextStyle(fontSize: 20)),
-      ),
-    );
-  }
-
-  get _buildButtonNavigationBar {
-    return BottomAppBar(
-      color: Colors.blue[800],
-      child: SizedBox(
-        height: 58,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-                icon: Icon(CupertinoIcons.chart_bar_square),
-                color: Colors.white,
-                iconSize: 30,
-                onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => OverviewPage()));
-                }),
-            IconButton(
-                icon: Icon(CupertinoIcons.plus),
-                color: Colors.white,
-                iconSize: 30,
-                onPressed: () {
-                  print("Add button clicked!");
-                }),
-            IconButton(
-                icon: Icon(CupertinoIcons.person),
-                color: Colors.white,
-                iconSize: 30,
-                onPressed: () {
-                  print("Account button clicked!");
-                }),
-          ],
-        ),
       ),
     );
   }

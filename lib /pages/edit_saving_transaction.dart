@@ -1,19 +1,19 @@
-import 'package:budget/models/expense_model.dart';
-import 'package:budget/repos/expense_repo.dart';
+import '../models/saving_model.dart';
+import '../repos/saving_repo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class EditExpenseDataPage extends StatefulWidget {
+class EditSavingDataPage extends StatefulWidget {
 
-  final Expense expense;
-  EditExpenseDataPage({this.expense});
+  final Saving saving;
+  EditSavingDataPage({this.saving});
 
   @override
-  _EditExpenseDataPageState createState() => _EditExpenseDataPageState();
+  _EditSavingDataPageState createState() => _EditSavingDataPageState();
 }
 
-class _EditExpenseDataPageState extends State<EditExpenseDataPage> {
+class _EditSavingDataPageState extends State<EditSavingDataPage> {
   var _amountCtrl = TextEditingController();
   var _transactionNameCtrl = TextEditingController();
   var _noteCtrl = TextEditingController();
@@ -27,9 +27,9 @@ class _EditExpenseDataPageState extends State<EditExpenseDataPage> {
   void initState() {
     super.initState();
 
-    _amountCtrl.text = widget.expense.amount;
-    _transactionNameCtrl.text = widget.expense.title;
-    _noteCtrl.text = widget.expense.note;
+    _amountCtrl.text = widget.saving.amount;
+    _transactionNameCtrl.text = widget.saving.title;
+    _noteCtrl.text = widget.saving.note;
   }
 
   @override
@@ -57,7 +57,7 @@ class _EditExpenseDataPageState extends State<EditExpenseDataPage> {
           Navigator.of(context).pop();
         },
       ),
-      title: Text("Edit Expense Transaction"),
+      title: Text("Edit Saving Transaction"),
     );
   }
 
@@ -305,15 +305,15 @@ class _EditExpenseDataPageState extends State<EditExpenseDataPage> {
           side: BorderSide(color: Color.fromRGBO(0, 160, 227, 1)),
         ),
         onPressed: () {
-          Expense expense = Expense(
-            id: widget.expense.id,
+          Saving saving = Saving(
+            id: widget.saving.id,
             title: _transactionNameCtrl.text.trim(),
             note: _noteCtrl.text.trim(),
             amount: _amountCtrl.text.trim(),
             date: _dateTime.toString(),
           );
 
-          updateExpenseData(expense).then((value) {
+          updateSavingData(saving).then((value) {
             print("value: $value");
             if (value == "updated") {
               _showMessage("Expense data updated successfully.");
